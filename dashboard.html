@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Ferragens Reis - Dashboard do Sistema de Gestão de Loja">
+    <title>Ferragens Reis | Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="dashboard.css">
+    <!-- Bibliotecas para PDF e Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Modal Overlay -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modalContent">
+            <div class="modal-header">
+                <h3 id="modalTitle">Título</h3>
+                <button class="modal-close" id="modalClose" aria-label="Fechar modal">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+            <div class="modal-footer" id="modalFooter"></div>
+        </div>
+    </div>
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-wrapper">
+                    <svg class="logo-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M44 8C38.48 8 34 12.48 34 18C34 19.39 34.29 20.71 34.78 21.92L14.34 42.36C13.17 41.52 11.64 41 10 41C6.13 41 3 44.13 3 48C3 51.87 6.13 55 10 55C13.87 55 17 51.87 17 48C17 46.36 16.48 44.83 15.64 43.66L36.08 23.22C37.29 23.71 38.61 24 40 24C45.52 24 50 19.52 50 14C50 12.87 49.8 11.79 49.44 10.78L43.22 17L39 13L45.22 6.78C44.21 6.2 43.13 8 44 8Z" fill="currentColor"/>
+                        <path d="M52 36L36 52L42 58L58 42L52 36Z" fill="currentColor" opacity="0.7"/>
+                    </svg>
+                    <h1>Ferragens Reis</h1>
+                </div>
+                <button class="sidebar-toggle" id="sidebarToggle" aria-label="Fechar sidebar">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="#" class="nav-link active" data-page="dashboard">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"/>
+                            <rect x="14" y="3" width="7" height="7"/>
+                            <rect x="14" y="14" width="7" height="7"/>
+                            <rect x="3" y="14" width="7" height="7"/>
+                        </svg>
+                        <span>📊 Dashboard</span>
+                    </a></li>
+                    <li><a href="#" class="nav-link" data-page="produtos">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                            <line x1="3" y1="6" x2="21" y2="6"/>
+                        </svg>
+                        <span>📦 Gestão de Produtos</span>
+                    </a></li>
+                    <li><a href="#" class="nav-link" data-page="clientes">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                        <span>👥 Clientes</span>
+                    </a></li>
+                    <li><a href="#" class="nav-link" data-page="fornecedores">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="3" y1="9" x2="21" y2="9"></line>
+                            <line x1="9" y1="21" x2="9" y2="9"></line>
+                        </svg>
+                        <span>🚚 Fornecedores</span>
+                    </a></li>
+                    <li><a href="#" class="nav-link" data-page="nf">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/>
+                            <polyline points="13 2 13 9 20 9"/>
+                        </svg>
+                        <span>🧾 Emissão de NF</span>
+                    </a></li>
+                    <li><a href="#" class="nav-link" data-page="notas">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                        </svg>
+                        <span>📑 Notas Fiscais</span>
+                    </a></li>
+                    <li><a href="#" class="nav-link" data-page="estoque">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="8" y1="6" x2="21" y2="6"/>
+                            <line x1="8" y1="12" x2="21" y2="12"/>
+                            <line x1="8" y1="18" x2="21" y2="18"/>
+                            <line x1="3" y1="6" x2="3.01" y2="6"/>
+                            <line x1="3" y1="12" x2="3.01" y2="12"/>
+                            <line x1="3" y1="18" x2="3.01" y2="18"/>
+                        </svg>
+                        <span>⚠ Controle de Estoque</span>
+                    </a></li>
+                    <li><a href="#" class="nav-link" data-page="financeiro">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="1" x2="12" y2="23"/>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                        </svg>
+                        <span>💰 Financeiro</span>
+                    </a></li>
+                    <li class="divider"></li>
+                    <li><a href="#" class="nav-link" data-page="usuario">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                        <span>👤 Administrador</span>
+                    </a></li>
+                </ul>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="sidebar-user-info">
+                    <div class="sidebar-avatar">A</div>
+                    <div class="sidebar-user-details">
+                        <span class="sidebar-user-name">admin</span>
+                        <span class="sidebar-user-role">Administrador</span>
+                    </div>
+                </div>
+                <button class="btn-logout" id="btnLogout">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                        <polyline points="16 17 21 12 16 7"/>
+                        <line x1="21" y1="12" x2="9" y2="12"/>
+                    </svg>
+                    <span>Sair</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Mobile Overlay -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <button class="header-toggle" id="headerToggle">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="3" y1="6" x2="21" y2="6"/>
+                            <line x1="3" y1="12" x2="21" y2="12"/>
+                            <line x1="3" y1="18" x2="21" y2="18"/>
+                        </svg>
+                    </button>
+                    <h2 id="page-title">Dashboard</h2>
+                </div>
+                <div class="header-right">
+                    <div class="header-date" id="headerDate"></div>
+                    <div class="user-info">
+                        <span id="username-display">admin</span>
+                        <div class="avatar">A</div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- ============ Dashboard Page ============ -->
+                <section id="dashboard-page" class="page active">
+                    <div class="page-header">
+                        <div>
+                            <h1>Dashboard</h1>
+                            <p class="page-subtitle">Bem-vindo ao painel de controle</p>
+                        </div>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card" data-page-link="produtos">
+                            <div class="stat-icon stat-icon-blue">📦</div>
+                            <div class="stat-content">
+                                <h3>Produtos</h3>
+                                <p class="stat-value" id="statProdutos">0</p>
+                                <span class="stat-label">Cadastrados</span>
+                            </div>
+                        </div>
+                        <div class="stat-card" data-page-link="notas">
+                            <div class="stat-icon stat-icon-green">📋</div>
+                            <div class="stat-content">
+                                <h3>Notas Fiscais</h3>
+                                <p class="stat-value" id="statNotas">0</p>
+                                <span class="stat-label">Emitidas</span>
+                            </div>
+                        </div>
+                        <div class="stat-card" data-page-link="estoque">
+                            <div class="stat-icon stat-icon-orange">📉</div>
+                            <div class="stat-content">
+                                <h3>Estoque Baixo</h3>
+                                <p class="stat-value" id="statEstoqueBaixo">0</p>
+                                <span class="stat-label">Produtos</span>
+                            </div>
+                        </div>
+                        <div class="stat-card" data-page-link="financeiro">
+                            <div class="stat-icon stat-icon-gold">💰</div>
+                            <div class="stat-content">
+                                <h3>Faturamento</h3>
+                                <p class="stat-value" id="statFaturamento">R$ 0,00</p>
+                                <span class="stat-label">Total</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-grid">
+                        <div class="dashboard-card chart-card">
+                            <div class="card-header">
+                                <h3>📈 Vendas Recentes</h3>
+                                <span class="card-badge">Últimos 7 dias</span>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="salesChart" width="600" height="250"></canvas>
+                            </div>
+                        </div>
+                        <div class="dashboard-card activity-card">
+                            <div class="card-header">
+                                <h3>🕐 Atividades Recentes</h3>
+                            </div>
+                            <div class="activity-list" id="activityList">
+                                <div class="activity-empty">
+                                    <p>Nenhuma atividade registrada</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-card" style="margin-top: 1.5rem; margin-bottom: 1.5rem;">
+                        <div class="card-header">
+                            <h3>🏆 Produtos Mais Vendidos</h3>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Produto</th>
+                                        <th>Qtd Vendida</th>
+                                        <th>Faturamento (R$)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="topProdutosTable">
+                                    <tr class="empty-row"><td colspan="3">Nenhuma venda registrada</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="quick-actions">
+                        <h3>Ações Rápidas</h3>
+                        <div class="quick-actions-grid">
+                            <button class="quick-action-btn" data-action="produtos">
+                                <span class="quick-icon">📦</span>
+                                <span>Novo Produto</span>
+                            </button>
+                            <button class="quick-action-btn" data-action="nf">
+                                <span class="quick-icon">🧾</span>
+                                <span>Nova NF</span>
+                            </button>
+                            <button class="quick-action-btn" data-action="estoque">
+                                <span class="quick-icon">📊</span>
+                                <span>Ver Estoque</span>
+                            </button>
+                            <button class="quick-action-btn" data-action="financeiro">
+                                <span class="quick-icon">💰</span>
+                                <span>Financeiro</span>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ============ Produtos Page ============ -->
+                <section id="produtos-page" class="page">
+                    <div class="page-header">
+                        <h1>📦 Gestão de Produtos</h1>
+                        <button class="btn-primary" id="btnNewProduct">+ Novo Produto</button>
+                    </div>
+
+                    <div class="form-section" id="productFormSection">
+                        <h3 id="productFormTitle">Cadastrar Novo Produto</h3>
+                        <form id="produtoForm" class="product-form">
+                            <input type="hidden" id="produtoId" value="">
+                            <div class="form-row">
+                                <div class="form-group" style="flex: 2;">
+                                    <label for="produtoNome">Nome do Produto *</label>
+                                    <input type="text" id="produtoNome" name="nome" placeholder="Ex: Parafuso Phillips 6mm" required>
+                                </div>
+                                <div class="form-group" style="flex: 1;">
+                                    <label for="produtoCodigoBarras">Código de Barras</label>
+                                    <input type="text" id="produtoCodigoBarras" name="codigo_barras" placeholder="Leitor USB ou digite">
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="produtoCategoria">Categoria *</label>
+                                    <select id="produtoCategoria" name="categoria" required>
+                                        <option value="">Selecione</option>
+                                        <option value="ferramentas_manuais">Ferramentas Manuais</option>
+                                        <option value="ferramentas_eletricas">Ferramentas Elétricas</option>
+                                        <option value="parafusos">Parafusos e Fixadores</option>
+                                        <option value="tintas">Tintas e Acessórios</option>
+                                        <option value="hidraulica">Hidráulica</option>
+                                        <option value="eletrica">Elétrica</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="produtoUnidade">Unidade *</label>
+                                    <select id="produtoUnidade" name="unidade" required>
+                                        <option value="">Selecione</option>
+                                        <option value="un">Unidade</option>
+                                        <option value="kg">Quilograma</option>
+                                        <option value="l">Litro</option>
+                                        <option value="m">Metro</option>
+                                        <option value="cx">Caixa</option>
+                                        <option value="pc">Pacote</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="produtoFornecedor">Fornecedor *</label>
+                                    <select id="produtoFornecedor" name="fornecedor" required>
+                                        <option value="">Selecione o Fornecedor</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="produtoCusto">Preço de Custo (R$) *</label>
+                                    <input type="number" id="produtoCusto" name="custo" step="0.01" min="0" placeholder="0,00" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="produtoVenda">Preço de Venda (R$) *</label>
+                                    <input type="number" id="produtoVenda" name="precovenda" step="0.01" min="0" placeholder="0,00" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="produtoMargem">Margem de Lucro (%)</label>
+                                    <input type="text" id="produtoMargem" name="margem" readonly class="readonly-field">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="produtoEstoque">Estoque Atual *</label>
+                                    <input type="number" id="produtoEstoque" name="estoque" min="0" placeholder="0" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="produtoEstoqueMin">Estoque Mínimo *</label>
+                                    <input type="number" id="produtoEstoqueMin" name="estoque_minimo" min="0" placeholder="0" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group" style="flex: 2;">
+                                    <label for="produtoDescricao">Descrição do Produto</label>
+                                    <textarea id="produtoDescricao" name="descricao" rows="5" placeholder="Descrição detalhada do produto..."></textarea>
+                                </div>
+                                <div class="form-group" style="flex: 1;">
+                                    <label>📷 Foto do Produto (Máx 5MB)</label>
+                                    <div class="image-upload-wrapper" style="border: 2px dashed var(--border); border-radius: 8px; padding: 1rem; text-align: center; cursor: pointer; position: relative;">
+                                        <img id="produtoImagemPreview" src="" style="max-width: 100%; max-height: 120px; display: none; margin: 0 auto 10px auto; border-radius: 4px;">
+                                        <span id="produtoImagemText" style="color: var(--text-muted); font-size: 0.9rem;">Clique ou arraste a imagem<br>(JPG, PNG, WEBP)</span>
+                                        <input type="file" id="produtoImagem" accept=".jpg, .jpeg, .png, .webp" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;">
+                                    </div>
+                                    <input type="hidden" id="produtoImagemBase64" value="">
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn-primary" id="btnSaveProduto">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                                        <polyline points="17 21 17 13 7 13 7 21"/>
+                                        <polyline points="7 3 7 8 15 8"/>
+                                    </svg>
+                                    Salvar Produto
+                                </button>
+                                <button type="reset" class="btn-secondary" id="btnClearProduto">Limpar</button>
+                                <button type="button" class="btn-secondary" id="btnCancelEdit" style="display:none;">Cancelar Edição</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="table-section">
+                        <div class="table-header">
+                            <h3>Produtos Cadastrados</h3>
+                            <div class="table-search">
+                                <input type="text" id="searchProdutos" placeholder="Buscar produto...">
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>Unidade</th>
+                                        <th>Preço Custo</th>
+                                        <th>Preço Venda</th>
+                                        <th>Margem</th>
+                                        <th>Estoque</th>
+                                        <th>Fornecedor</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="produtosTable">
+                                    <tr class="empty-row">
+                                        <td colspan="8">Nenhum produto cadastrado</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ============ Clientes Page ============ -->
+                <section id="clientes-page" class="page">
+                    <div class="page-header">
+                        <h1>👥 Cadastro de Clientes</h1>
+                        <button class="btn-primary" id="btnNewCliente">+ Novo Cliente</button>
+                    </div>
+
+                    <div class="form-section" id="clienteFormSection" style="display:none;">
+                        <h3 id="clienteFormTitle">Cadastrar Novo Cliente</h3>
+                        <form id="clienteForm" class="product-form">
+                            <input type="hidden" id="clienteId" value="">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="cadClienteNome">Nome Completo *</label>
+                                    <input type="text" id="cadClienteNome" name="nome" placeholder="Nome completo" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="cadClienteCPF">CPF/CNPJ *</label>
+                                    <input type="text" id="cadClienteCPF" name="cpf" placeholder="000.000.000-00" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="cadClienteTel">Telefone</label>
+                                    <input type="tel" id="cadClienteTel" name="telefone" placeholder="(00) 00000-0000">
+                                </div>
+                                <div class="form-group">
+                                    <label for="cadClienteEmail">E-mail</label>
+                                    <input type="email" id="cadClienteEmail" name="email" placeholder="email@exemplo.com">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group full">
+                                    <label for="cadClienteEndereco">Endereço</label>
+                                    <input type="text" id="cadClienteEndereco" name="endereco" placeholder="Rua, número, bairro">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="cadClienteCidade">Cidade</label>
+                                    <input type="text" id="cadClienteCidade" name="cidade" placeholder="Cidade">
+                                </div>
+                                <div class="form-group">
+                                    <label for="cadClienteUF">UF</label>
+                                    <select id="cadClienteUF" name="uf">
+                                        <option value="">Selecione</option>
+                                        <option value="SP">SP</option>
+                                        <option value="RJ">RJ</option>
+                                        <option value="MG">MG</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group full">
+                                    <label for="cadClienteObs">Observações</label>
+                                    <textarea id="cadClienteObs" name="observacoes" rows="2" placeholder="Informações adicionais..."></textarea>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn-primary" id="btnSaveCliente">Salvar Cliente</button>
+                                <button type="button" class="btn-secondary" id="btnCancelCliente">Cancelar</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="table-section">
+                        <div class="table-header">
+                            <h3>Clientes Cadastrados</h3>
+                            <div class="table-search">
+                                <input type="text" id="searchClientes" placeholder="Buscar cliente...">
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>CPF/CNPJ</th>
+                                        <th>Telefone</th>
+                                        <th>Cidade/UF</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="clientesTable">
+                                    <tr class="empty-row"><td colspan="5">Nenhum cliente cadastrado</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ============ Fornecedores Page ============ -->
+                <section id="fornecedores-page" class="page">
+                    <div class="page-header">
+                        <h1>🚚 Cadastro de Fornecedores</h1>
+                        <button class="btn-primary" id="btnNewFornecedor">+ Novo Fornecedor</button>
+                    </div>
+
+                    <div class="form-section" id="fornecedorFormSection" style="display:none;">
+                        <h3 id="fornecedorFormTitle">Cadastrar Novo Fornecedor</h3>
+                        <form id="fornecedorForm" class="product-form">
+                            <input type="hidden" id="fornecedorId" value="">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="cadFornRazao">Razão Social *</label>
+                                    <input type="text" id="cadFornRazao" name="razao_social" placeholder="Razão Social" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="cadFornCNPJ">CNPJ *</label>
+                                    <input type="text" id="cadFornCNPJ" name="cnpj" placeholder="00.000.000/0000-00" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="cadFornContato">Nome do Contato</label>
+                                    <input type="text" id="cadFornContato" name="contato" placeholder="Nome do representante">
+                                </div>
+                                <div class="form-group">
+                                    <label for="cadFornTel">Telefone</label>
+                                    <input type="tel" id="cadFornTel" name="telefone" placeholder="(00) 00000-0000">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="cadFornEmail">E-mail</label>
+                                    <input type="email" id="cadFornEmail" name="email" placeholder="contato@fornecedor.com">
+                                </div>
+                                <div class="form-group">
+                                    <label for="cadFornProdutos">Produtos Fornecidos</label>
+                                    <input type="text" id="cadFornProdutos" name="produtos_fornecidos" placeholder="Ex: Tintas, Parafusos...">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group full">
+                                    <label for="cadFornObs">Observações</label>
+                                    <textarea id="cadFornObs" name="observacoes" rows="2" placeholder="Informações adicionais..."></textarea>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn-primary" id="btnSaveFornecedor">Salvar Fornecedor</button>
+                                <button type="button" class="btn-secondary" id="btnCancelFornecedor">Cancelar</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="table-section">
+                        <div class="table-header">
+                            <h3>Fornecedores Cadastrados</h3>
+                            <div class="table-search">
+                                <input type="text" id="searchFornecedores" placeholder="Buscar fornecedor...">
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Razão Social</th>
+                                        <th>CNPJ</th>
+                                        <th>Contato</th>
+                                        <th>Telefone</th>
+                                        <th>Produtos</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="fornecedoresTable">
+                                    <tr class="empty-row"><td colspan="6">Nenhum fornecedor cadastrado</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ============ Nota Fiscal Page ============ -->
+                <section id="nf-page" class="page">
+                    <div class="page-header">
+                        <h1>🧾 Emissão de Nota Fiscal</h1>
+                    </div>
+
+                    <div class="nf-container">
+                        <div class="nf-section">
+                            <h3>👤 Dados do Cliente</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="clienteNome">Nome *</label>
+                                    <input type="text" id="clienteNome" name="clienteNome" placeholder="Nome completo">
+                                </div>
+                                <div class="form-group">
+                                    <label for="clienteCPF">CPF/CNPJ *</label>
+                                    <input type="text" id="clienteCPF" name="clienteCPF" placeholder="000.000.000-00" maxlength="18">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="clienteTel">Telefone</label>
+                                    <input type="tel" id="clienteTel" name="clienteTel" placeholder="(00) 00000-0000" maxlength="15">
+                                </div>
+                                <div class="form-group">
+                                    <label for="clienteEmail">E-mail</label>
+                                    <input type="email" id="clienteEmail" name="clienteEmail" placeholder="email@exemplo.com">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group full">
+                                    <label for="clienteEndereco">Endereço</label>
+                                    <input type="text" id="clienteEndereco" name="clienteEndereco" placeholder="Rua, número, bairro">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="clienteCidade">Cidade</label>
+                                    <input type="text" id="clienteCidade" name="clienteCidade" placeholder="Cidade">
+                                </div>
+                                <div class="form-group">
+                                    <label for="clienteUF">UF</label>
+                                    <select id="clienteUF" name="clienteUF">
+                                        <option value="">Selecione</option>
+                                        <option value="AC">AC</option><option value="AL">AL</option>
+                                        <option value="AP">AP</option><option value="AM">AM</option>
+                                        <option value="BA">BA</option><option value="CE">CE</option>
+                                        <option value="DF">DF</option><option value="ES">ES</option>
+                                        <option value="GO">GO</option><option value="MA">MA</option>
+                                        <option value="MT">MT</option><option value="MS">MS</option>
+                                        <option value="MG">MG</option><option value="PA">PA</option>
+                                        <option value="PB">PB</option><option value="PR">PR</option>
+                                        <option value="PE">PE</option><option value="PI">PI</option>
+                                        <option value="RJ">RJ</option><option value="RN">RN</option>
+                                        <option value="RS">RS</option><option value="RO">RO</option>
+                                        <option value="RR">RR</option><option value="SC">SC</option>
+                                        <option value="SP">SP</option><option value="SE">SE</option>
+                                        <option value="TO">TO</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="nf-section">
+                            <h3>📦 Produtos</h3>
+                            <div class="add-product-row">
+                                <select id="selectProduto">
+                                    <option value="">Selecione um produto</option>
+                                </select>
+                                <input type="number" id="qtdProduto" placeholder="Qtd" min="1" value="1">
+                                <input type="number" id="precoProduto" placeholder="Preço unit." step="0.01">
+                                <input type="number" id="descProduto" placeholder="Desc. (R$)" step="0.01" value="0">
+                                <button type="button" id="btnAddProduto" class="btn-primary">+ Adicionar</button>
+                            </div>
+
+                            <div class="table-responsive">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Produto</th>
+                                            <th>Quantidade</th>
+                                            <th>Preço Unit.</th>
+                                            <th>Desconto</th>
+                                            <th>Subtotal</th>
+                                            <th>Ação</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="nfProdutosTable">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="nf-section">
+                            <h3>💳 Resumo da Venda</h3>
+                            <div class="nf-summary">
+                                <div class="summary-row">
+                                    <span>Subtotal:</span>
+                                    <span id="nfSubtotal" class="summary-value">R$ 0,00</span>
+                                </div>
+                                <div class="summary-row">
+                                    <label for="nfDescontoGeral">Desconto Geral (%):</label>
+                                    <input type="number" id="nfDescontoGeral" step="0.01" value="0" min="0" max="100">
+                                </div>
+                                <div class="summary-row highlight">
+                                    <span>Total:</span>
+                                    <span id="nfTotal" class="summary-value">R$ 0,00</span>
+                                </div>
+                                <div class="summary-row">
+                                    <label for="nfFormaPagamento">Forma de Pagamento: *</label>
+                                    <select id="nfFormaPagamento">
+                                        <option value="">Selecione</option>
+                                        <option value="dinheiro">💵 Dinheiro</option>
+                                        <option value="pix">📱 Pix</option>
+                                        <option value="cartao_credito">💳 Cartão de Crédito</option>
+                                        <option value="cartao_debito">💳 Cartão de Débito</option>
+                                        <option value="boleto">📄 Boleto</option>
+                                        <option value="transferencia">🏦 Transferência</option>
+                                    </select>
+                                </div>
+                                <div class="summary-row">
+                                    <label for="nfObservacoes">Observações:</label>
+                                    <textarea id="nfObservacoes" rows="3" placeholder="Observações adicionais..."></textarea>
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="button" class="btn-primary btn-lg" id="btnEmitirNF">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                        <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/>
+                                        <polyline points="13 2 13 9 20 9"/>
+                                    </svg>
+                                    Emitir Nota Fiscal
+                                </button>
+                                <button type="button" class="btn-secondary" id="btnLimparNF">Limpar Tudo</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ============ Notas Fiscais Page ============ -->
+                <section id="notas-page" class="page">
+                    <div class="page-header">
+                        <h1>📑 Histórico de Notas Fiscais</h1>
+                        <div class="header-actions">
+                            <button class="btn-secondary" onclick="app.exportToExcel('notasTable', 'Historico_Notas_Fiscais')">
+                                📥 Exportar Excel
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="table-section">
+                        <div class="table-header">
+                            <h3>Consulta de Notas Fiscais</h3>
+                            <div class="table-filters">
+                                <input type="text" id="searchNotas" placeholder="Buscar por cliente ou nº...">
+                                <input type="date" id="filterDataNotas">
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>NF</th>
+                                        <th>Data</th>
+                                        <th>Cliente</th>
+                                        <th>CPF/CNPJ</th>
+                                        <th>Total</th>
+                                        <th>Pagamento</th>
+                                        <th>Status</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="notasTable">
+                                    <tr class="empty-row">
+                                        <td colspan="8">Nenhuma nota fiscal emitida</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ============ Estoque Page ============ -->
+                <section id="estoque-page" class="page">
+                    <div class="page-header">
+                        <h1>⚠ Controle de Estoque</h1>
+                    </div>
+
+                    <div class="estoque-stats" id="estoqueStats">
+                        <div class="estoque-stat-card">
+                            <div class="estoque-stat-icon normal">✅</div>
+                            <div>
+                                <span class="estoque-stat-value" id="estoqueNormal">0</span>
+                                <span class="estoque-stat-label">Normal</span>
+                            </div>
+                        </div>
+                        <div class="estoque-stat-card">
+                            <div class="estoque-stat-icon baixo">⚠</div>
+                            <div>
+                                <span class="estoque-stat-value" id="estoqueBaixo">0</span>
+                                <span class="estoque-stat-label">Estoque Baixo</span>
+                            </div>
+                        </div>
+                        <div class="estoque-stat-card">
+                            <div class="estoque-stat-icon critico">🔴</div>
+                            <div>
+                                <span class="estoque-stat-value" id="estoqueCritico">0</span>
+                                <span class="estoque-stat-label">Crítico</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="estoque-filters">
+                        <div class="filter-group">
+                            <label>Mostrar:</label>
+                            <select id="filterEstoque">
+                                <option value="todos">Todos</option>
+                                <option value="baixo">Estoque Baixo</option>
+                                <option value="critico">Estoque Crítico</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <input type="text" id="searchEstoque" placeholder="Buscar produto...">
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Produto</th>
+                                    <th>Quantidade Atual</th>
+                                    <th>Estoque Mínimo</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="estoqueTable">
+                                <tr class="empty-row">
+                                    <td colspan="5">Nenhum produto cadastrado</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="dashboard-card" style="margin-top: 2rem;">
+                        <div class="card-header">
+                            <h3>📦 Histórico de Movimentação de Estoque</h3>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Data/Hora</th>
+                                        <th>Ação</th>
+                                        <th>Descrição</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="historicoEstoqueTable">
+                                    <tr class="empty-row"><td colspan="3">Nenhum registro encontrado</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ============ Financeiro Page ============ -->
+                <section id="financeiro-page" class="page">
+                    <div class="page-header">
+                        <h1>💰 Fluxo de Caixa</h1>
+                        <div class="header-actions">
+                            <select id="filterFinanceiro" style="margin-right: 1rem; padding: 0.5rem; border-radius: 4px;">
+                                <option value="todos">Todos</option>
+                                <option value="7">Últimos 7 dias</option>
+                                <option value="30">Últimos 30 dias</option>
+                                <option value="90">Últimos 90 dias</option>
+                            </select>
+                            <button class="btn-primary" id="btnNovaDespesa">+ Lançar Despesa</button>
+                        </div>
+                    </div>
+
+                    <div class="form-section" id="despesaFormSection" style="display:none;">
+                        <h3>Lançar Nova Despesa</h3>
+                        <form id="despesaForm" class="product-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Descrição *</label>
+                                    <input type="text" id="cadDespesaDesc" placeholder="Ex: Conta de Luz" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Valor (R$) *</label>
+                                    <input type="number" id="cadDespesaValor" step="0.01" min="0.01" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Data *</label>
+                                    <input type="date" id="cadDespesaData" required>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn-primary">Salvar Despesa</button>
+                                <button type="button" class="btn-secondary" id="btnCancelDespesa">Cancelar</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="financeiro-stats">
+                        <div class="fin-card">
+                            <div class="fin-icon" style="color: var(--success)">📈</div>
+                            <h3>Receitas (Entradas)</h3>
+                            <p class="fin-value" id="finReceitas">R$ 0,00</p>
+                        </div>
+                        <div class="fin-card">
+                            <div class="fin-icon" style="color: var(--error)">📉</div>
+                            <h3>Despesas (Saídas)</h3>
+                            <p class="fin-value fin-discount" id="finDespesas" style="color: var(--error)">R$ 0,00</p>
+                        </div>
+                        <div class="fin-card highlight">
+                            <div class="fin-icon">💰</div>
+                            <h3>Saldo Geral</h3>
+                            <p class="fin-value" id="finSaldo">R$ 0,00</p>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-card chart-card" style="margin-bottom: 2rem;">
+                        <div class="card-header">
+                            <h3>📈 Gráfico de Fluxo de Caixa</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="financeChart" width="600" height="250"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="table-section">
+                        <div class="table-header">
+                            <h3>Histórico de Transações</h3>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Data</th>
+                                        <th>Tipo</th>
+                                        <th>Descrição</th>
+                                        <th>Valor</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="fluxoCaixaTable">
+                                    <tr class="empty-row">
+                                        <td colspan="5">Nenhuma transação registrada</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ============ Usuário Page ============ -->
+                <section id="usuario-page" class="page">
+                    <div class="page-header">
+                        <h1>👤 Administrador</h1>
+                    </div>
+
+                    <div class="user-settings">
+                        <div class="user-profile-card">
+                            <div class="profile-avatar">A</div>
+                            <div class="profile-info">
+                                <h2>Administrador</h2>
+                                <p>admin</p>
+                                <span class="profile-badge">Admin</span>
+                            </div>
+                        </div>
+
+                        <div class="settings-section">
+                            <h3>📋 Dados do Usuário</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="userUsername">Usuário</label>
+                                    <input type="text" id="userUsername" value="admin" disabled class="readonly-field">
+                                </div>
+                                <div class="form-group">
+                                    <label for="userEmail">E-mail</label>
+                                    <input type="email" id="userEmail" placeholder="admin@ferragensreis.com.br">
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn-primary" id="btnSalvarDados">Salvar Dados</button>
+                            </div>
+                        </div>
+
+                        <div class="settings-section">
+                            <h3>🔒 Mudar Senha</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="senhaAtual">Senha Atual</label>
+                                    <input type="password" id="senhaAtual" placeholder="Digite a senha atual">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="senhaNova">Nova Senha</label>
+                                    <input type="password" id="senhaNova" placeholder="Mínimo 6 caracteres">
+                                </div>
+                                <div class="form-group">
+                                    <label for="senhaConfirm">Confirmar Nova Senha</label>
+                                    <input type="password" id="senhaConfirm" placeholder="Repita a nova senha">
+                                </div>
+                            </div>
+                            <div id="passwordStrengthBar" class="password-strength-bar">
+                                <div class="strength-fill" id="strengthFill"></div>
+                            </div>
+                            <p class="strength-label" id="strengthLabel"></p>
+                            <div class="form-actions">
+                                <button type="button" class="btn-primary" id="btnMudarSenha">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                                    </svg>
+                                    Mudar Senha
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Area restrita ao admin -->
+                        <div class="settings-section admin-only-section" id="adminUsersSection" style="display:none;">
+                            <div class="table-header">
+                                <h3>👥 Gerenciamento de Usuários</h3>
+                                <button type="button" class="btn-primary" onclick="app.showNewUserModal()">+ Novo Usuário</button>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Usuário</th>
+                                            <th>Nome</th>
+                                            <th>Perfil</th>
+                                            <th>Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="usuariosTable">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="settings-section">
+                            <h3>⚙️ Preferências do Sistema</h3>
+                            <div class="preference-item">
+                                <label class="toggle-label">
+                                    <span>Modo Escuro</span>
+                                    <input type="checkbox" id="prefDarkMode" checked>
+                                    <span class="toggle-switch"></span>
+                                </label>
+                            </div>
+                            <div class="preference-item">
+                                <label class="toggle-label">
+                                    <span>Ativar Notificações</span>
+                                    <input type="checkbox" id="prefNotificacoes" checked>
+                                    <span class="toggle-switch"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="settings-section">
+                            <h3>ℹ️ Informações do Sistema</h3>
+                            <div class="system-info-grid">
+                                <div class="system-info-item">
+                                    <span class="info-label">Versão</span>
+                                    <span class="info-value">1.0.0</span>
+                                </div>
+                                <div class="system-info-item">
+                                    <span class="info-label">Última Atualização</span>
+                                    <span class="info-value">07/07/2026</span>
+                                </div>
+                                <div class="system-info-item">
+                                    <span class="info-label">Produtos Cadastrados</span>
+                                    <span class="info-value" id="sysInfoProdutos">0</span>
+                                </div>
+                                <div class="system-info-item">
+                                    <span class="info-label">Notas Emitidas</span>
+                                    <span class="info-value" id="sysInfoNotas">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="api_sync.js"></script>
+    <script src="dashboard.js"></script>
+    <script src="novas_funcionalidades.js"></script>
+</body>
+</html>

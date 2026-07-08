@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Ferragens Reis - Sistema de gestão de loja. Faça login para acessar o painel administrativo.">
+    <title>Ferragens Reis | Login</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+    <!-- Partículas animadas de fundo -->
+    <div class="particles" aria-hidden="true">
+        <span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span><span></span>
+    </div>
+
+    <main class="login-container">
+        <!-- Painel esquerdo — Branding -->
+        <section class="brand-panel" aria-label="Branding Ferragens Reis">
+            <div class="brand-content">
+                <div class="logo-wrapper">
+                    <div class="logo-icon">
+                        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <!-- Ícone de chave inglesa estilizada -->
+                            <path d="M44 8C38.48 8 34 12.48 34 18C34 19.39 34.29 20.71 34.78 21.92L14.34 42.36C13.17 41.52 11.64 41 10 41C6.13 41 3 44.13 3 48C3 51.87 6.13 55 10 55C13.87 55 17 51.87 17 48C17 46.36 16.48 44.83 15.64 43.66L36.08 23.22C37.29 23.71 38.61 24 40 24C45.52 24 50 19.52 50 14C50 12.87 49.8 11.79 49.44 10.78L43.22 17L39 13L45.22 6.78C44.21 6.2 43.13 8 44 8Z" fill="currentColor"/>
+                            <path d="M52 36L36 52L42 58L58 42L52 36Z" fill="currentColor" opacity="0.7"/>
+                            <circle cx="48" cy="48" r="4" fill="currentColor" opacity="0.5"/>
+                        </svg>
+                    </div>
+                    <div class="logo-glow" aria-hidden="true"></div>
+                </div>
+                <h1 class="brand-name">
+                    <span class="brand-ferragens">Ferragens</span>
+                    <span class="brand-reis">Reis</span>
+                </h1>
+                <p class="brand-tagline">Sistema de Gestão</p>
+                <div class="brand-divider" aria-hidden="true"></div>
+                <p class="brand-description">
+                    Gerencie seu estoque, vendas e clientes com eficiência e segurança.
+                </p>
+                <div class="brand-features">
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                        </div>
+                        <span>Gestão de Clientes</span>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                                <line x1="3" y1="6" x2="21" y2="6"/>
+                                <path d="M16 10a4 4 0 0 1-8 0"/>
+                            </svg>
+                        </div>
+                        <span>Controle de Estoque</span>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="1" x2="12" y2="23"/>
+                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                            </svg>
+                        </div>
+                        <span>Relatórios Financeiros</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Painel direito — Formulário de Login -->
+        <section class="form-panel" aria-label="Formulário de Login">
+            <div class="form-content">
+                <!-- Logo mobile (visível apenas em telas menores) -->
+                <div class="mobile-logo">
+                    <div class="mobile-logo-icon">
+                        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <path d="M44 8C38.48 8 34 12.48 34 18C34 19.39 34.29 20.71 34.78 21.92L14.34 42.36C13.17 41.52 11.64 41 10 41C6.13 41 3 44.13 3 48C3 51.87 6.13 55 10 55C13.87 55 17 51.87 17 48C17 46.36 16.48 44.83 15.64 43.66L36.08 23.22C37.29 23.71 38.61 24 40 24C45.52 24 50 19.52 50 14C50 12.87 49.8 11.79 49.44 10.78L43.22 17L39 13L45.22 6.78C44.21 6.2 43.13 8 44 8Z" fill="currentColor"/>
+                            <path d="M52 36L36 52L42 58L58 42L52 36Z" fill="currentColor" opacity="0.7"/>
+                        </svg>
+                    </div>
+                    <h1 class="mobile-brand-name">Ferragens <span>Reis</span></h1>
+                </div>
+
+                <div class="form-header">
+                    <h2 id="login-heading">Bem-vindo de volta</h2>
+                    <p>Insira suas credenciais para acessar o sistema</p>
+                </div>
+
+                <form id="loginForm" class="login-form" aria-labelledby="login-heading" novalidate>
+                    <!-- Token CSRF para proteção contra ataques cross-site -->
+                    <input type="hidden" id="csrf-token" name="csrf_token" value="">
+                    <div class="input-group" id="username-group">
+                        <label for="username">Usuário</label>
+                        <div class="input-wrapper">
+                            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                            <input 
+                                type="text" 
+                                id="username" 
+                                name="username" 
+                                placeholder="Digite seu usuário" 
+                                autocomplete="username"
+                                required
+                            >
+                            <div class="input-focus-line" aria-hidden="true"></div>
+                        </div>
+                        <span class="input-error" id="username-error" role="alert"></span>
+                    </div>
+
+                    <div class="input-group" id="password-group">
+                        <label for="password">Senha</label>
+                        <div class="input-wrapper">
+                            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                            </svg>
+                            <input 
+                                type="password" 
+                                id="password" 
+                                name="password" 
+                                placeholder="••••••••" 
+                                autocomplete="current-password"
+                                required
+                            >
+                            <button type="button" class="toggle-password" id="togglePassword" aria-label="Mostrar senha">
+                                <svg class="eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                                <svg class="eye-closed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                                    <line x1="1" y1="1" x2="23" y2="23"/>
+                                </svg>
+                            </button>
+                            <div class="input-focus-line" aria-hidden="true"></div>
+                        </div>
+                        <span class="input-error" id="password-error" role="alert"></span>
+                    </div>
+
+                    <div class="form-options">
+                        <label class="checkbox-wrapper" for="remember">
+                            <input type="checkbox" id="remember" name="remember">
+                            <span class="checkmark"></span>
+                            <span class="checkbox-label">Lembrar-me</span>
+                        </label>
+                        <a href="#" class="forgot-link" id="forgotPassword">Esqueceu a senha?</a>
+                    </div>
+
+                    <button type="submit" class="btn-login" id="btnLogin">
+                        <span class="btn-text">Entrar</span>
+                        <span class="btn-loader" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10" opacity="0.25"/>
+                                <path d="M12 2a10 10 0 0 1 10 10" stroke-linecap="round"/>
+                            </svg>
+                        </span>
+                        <span class="btn-success" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                        </span>
+                    </button>
+                </form>
+
+                <div class="form-footer">
+                    <p>© 2026 Ferragens Reis. Todos os direitos reservados.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Security headers via meta tags -->
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    
+    <script src="security.js"></script>
+    <script src="login.js"></script>
+</body>
+</html>
