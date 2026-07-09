@@ -521,6 +521,12 @@ class DashboardApp {
      */
     showPage(pageId) {
         document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+        
+        // Sempre fecha o scanner da câmera ao trocar de tela
+        if (window.closeCameraScanner) {
+            window.closeCameraScanner();
+        }
+
         const page = document.getElementById(`${pageId}-page`);
         if (page) {
             page.classList.add('active');

@@ -1148,3 +1148,95 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+// ==========================================
+// FECHAMENTO DIÁRIO
+// ==========================================
+window.showFechamentoDiario = function() {
+    const hojeStr = new Date().toLocaleDateString('pt-BR');
+    
+    // Calcular Vendas
+    const vendas = JSON.parse(localStorage.getItem('vendas')) || [];
+    const vendasHoje = vendas.filter(v => v.data === hojeStr);
+    
+    let totalReceitas = 0;
+    let totalDescontos = 0;
+    let totalProdutosVendidos = 0;
+    
+    vendasHoje.forEach(v => {
+        totalReceitas += (v.valor || 0);
+        totalDescontos += (v.desconto || 0);
+        
+        if (v.itens) {
+            v.itens.forEach(item => {
+                totalProdutosVendidos += (item.quantidade || 1);
+            });
+        }
+    });
+
+    // Calcular Despesas
+    const despesas = JSON.parse(localStorage.getItem('despesas')) || [];
+    
+    const hojeObj = new Date();
+    const ano = hojeObj.getFullYear();
+    const mes = String(hojeObj.getMonth() + 1).padStart(2, '0');
+    const dia = String(hojeObj.getDate()).padStart(2, '0');
+    const hojeISO = `${ano}-${mes}-${dia}`; // formato YYYY-MM-DD
+
+    let totalDespesas = 0;
+    const despesasHoje = despesas.filter(d => d.data === hojeStr || d.data === hojeISO);
+    
+    despesasHoje.forEach(d => {
+        totalDespesas += (parseFloat(d.valor) || 0);
+    });
+
+    const saldo = totalReceitas - totalDespesas;
+    
+    const html = `
+        <div style="text-align: center; padding: 10px;">
+            <p style="color: var(--text-secondary); margin-bottom: 20px;">Relatório referente ao dia: <strong>${hojeStr}</strong></p>
+            
+            <div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px; text-align: left; background: var(--bg-secondary); padding: 20px; border-radius: 8px;">
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+                    <span>Vendas Realizadas:</span>
+                    <strong>${vendasHoje.length} vendas</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+                    <span>Produtos Vendidos:</span>
+                    <strong>${totalProdutosVendidos} unidades</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; color: var(--success);">
+                    <span>(+) Entradas (Receitas):</span>
+                    <strong>R$ ${totalReceitas.toFixed(2).replace('.', ',')}</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; color: var(--error);">
+                    <span>(-) Saídas (Despesas):</span>
+                    <strong>R$ ${totalDespesas.toFixed(2).replace('.', ',')}</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding-top: 5px; font-size: 1.2rem; color: ${saldo >= 0 ? 'var(--success)' : 'var(--error)'};">
+                    <span><strong>Saldo do Dia:</strong></span>
+                    <strong>R$ ${saldo.toFixed(2).replace('.', ',')}</strong>
+                </div>
+            </div>
+            
+            <button class="btn-primary" onclick="window.print()" style="width: 100%; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                🖨️ Imprimir Fechamento
+            </button>
+        </div>
+    `;
+    
+    if (window.app && window.app.modal) {
+        window.app.modal.open('Fechamento Diário 🧾', html);
+    } else {
+        alert("Erro ao carregar o fechamento. Atualize a página e tente novamente.");
+    }
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+        const btnFechamento = document.getElementById('btnFechamentoDiario');
+        if (btnFechamento) {
+            btnFechamento.addEventListener('click', window.showFechamentoDiario);
+        }
+    }, 500);
+});
