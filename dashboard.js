@@ -1573,4 +1573,5 @@ class DashboardApp {
 let app;
 document.addEventListener('DOMContentLoaded', () => {
     app = new DashboardApp();
+    window.app = app; // Expõe globalmente para outros scripts
 });
