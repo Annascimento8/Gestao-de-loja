@@ -1238,5 +1238,96 @@ document.addEventListener('DOMContentLoaded', () => {
         if (btnFechamento) {
             btnFechamento.addEventListener('click', window.showFechamentoDiario);
         }
+        
+        const btnFechamentoMensal = document.getElementById('btnFechamentoMensal');
+        if (btnFechamentoMensal) {
+            btnFechamentoMensal.addEventListener('click', window.showFechamentoMensal);
+        }
     }, 500);
 });
+
+// ==========================================
+// FECHAMENTO MENSAL
+// ==========================================
+window.showFechamentoMensal = function() {
+    const hojeObj = new Date();
+    const ano = hojeObj.getFullYear();
+    const mes = String(hojeObj.getMonth() + 1).padStart(2, '0');
+    const mesStr = `${mes}/${ano}`;
+    const prefixISO = `${ano}-${mes}`;
+    const prefixBR = `/${mes}/${ano}`;
+    
+    // Nomes dos meses para o relatório
+    const nomesMeses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+    const nomeMesAtual = nomesMeses[hojeObj.getMonth()];
+
+    // Calcular Vendas
+    const vendas = JSON.parse(localStorage.getItem('vendas')) || [];
+    const vendasMes = vendas.filter(v => v.data && (v.data.endsWith(prefixBR)));
+    
+    let totalReceitas = 0;
+    let totalDescontos = 0;
+    let totalProdutosVendidos = 0;
+    
+    vendasMes.forEach(v => {
+        totalReceitas += (v.valor || 0);
+        totalDescontos += (v.desconto || 0);
+        
+        if (v.itens) {
+            v.itens.forEach(item => {
+                totalProdutosVendidos += (item.quantidade || 1);
+            });
+        }
+    });
+
+    // Calcular Despesas
+    const despesas = JSON.parse(localStorage.getItem('despesas')) || [];
+    
+    let totalDespesas = 0;
+    const despesasMes = despesas.filter(d => d.data && (d.data.endsWith(prefixBR) || d.data.startsWith(prefixISO)));
+    
+    despesasMes.forEach(d => {
+        totalDespesas += (parseFloat(d.valor) || 0);
+    });
+
+    const saldo = totalReceitas - totalDespesas;
+    
+    const html = `
+        <div style="text-align: center; padding: 10px;">
+            <p style="color: var(--text-secondary); margin-bottom: 20px;">Relatório referente a: <strong>${nomeMesAtual} de ${ano}</strong></p>
+            
+            <div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px; text-align: left; background: var(--bg-secondary); padding: 20px; border-radius: 8px;">
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+                    <span>Vendas Realizadas:</span>
+                    <strong>${vendasMes.length} vendas</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+                    <span>Produtos Vendidos:</span>
+                    <strong>${totalProdutosVendidos} unidades</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; color: var(--success);">
+                    <span>(+) Entradas (Receitas):</span>
+                    <strong>R$ ${totalReceitas.toFixed(2).replace('.', ',')}</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; color: var(--error);">
+                    <span>(-) Saídas (Despesas):</span>
+                    <strong>R$ ${totalDespesas.toFixed(2).replace('.', ',')}</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding-top: 5px; font-size: 1.2rem; color: ${saldo >= 0 ? 'var(--success)' : 'var(--error)'};">
+                    <span><strong>Saldo do Mês:</strong></span>
+                    <strong>R$ ${saldo.toFixed(2).replace('.', ',')}</strong>
+                </div>
+            </div>
+            
+            <button class="btn-primary" onclick="window.print()" style="width: 100%; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                🖨️ Imprimir Fechamento Mensal
+            </button>
+        </div>
+    `;
+    
+    if (window.app && window.app.modal) {
+        window.app.modal.open('Fechamento Mensal 📅', html);
+    } else {
+        alert("Erro ao carregar o fechamento. Atualize a página e tente novamente.");
+    }
+};
