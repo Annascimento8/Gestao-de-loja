@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Ferragens Reis - Dashboard do Sistema de Gestão de Loja">
     <title>Ferragens Reis | Dashboard</title>
+    <link rel="icon" type="image/png" href="favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -301,7 +302,12 @@
                                 </div>
                                 <div class="form-group" style="flex: 1;">
                                     <label for="produtoCodigoBarras">Código de Barras</label>
-                                    <input type="text" id="produtoCodigoBarras" name="codigo_barras" placeholder="Leitor USB ou digite">
+                                    <div style="display: flex; gap: 5px;">
+                                        <button type="button" class="btn-camera" onclick="startCameraScanner('produtoCodigoBarras')" title="Ler pela Câmera">
+                                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                                        </button>
+                                        <input type="text" id="produtoCodigoBarras" name="codigo_barras" placeholder="Leitor USB ou digite" style="flex: 1;">
+                                    </div>
                                 </div>
                             </div>
                             
@@ -371,10 +377,17 @@
                                 </div>
                                 <div class="form-group" style="flex: 1;">
                                     <label>📷 Foto do Produto (Máx 5MB)</label>
-                                    <div class="image-upload-wrapper" style="border: 2px dashed var(--border); border-radius: 8px; padding: 1rem; text-align: center; cursor: pointer; position: relative;">
-                                        <img id="produtoImagemPreview" src="" style="max-width: 100%; max-height: 120px; display: none; margin: 0 auto 10px auto; border-radius: 4px;">
-                                        <span id="produtoImagemText" style="color: var(--text-muted); font-size: 0.9rem;">Clique ou arraste a imagem<br>(JPG, PNG, WEBP)</span>
-                                        <input type="file" id="produtoImagem" accept=".jpg, .jpeg, .png, .webp" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;">
+                                    <div class="image-upload-wrapper premium-upload">
+                                        <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                            <polyline points="17 8 12 3 7 8"/>
+                                            <line x1="12" y1="3" x2="12" y2="15"/>
+                                        </svg>
+                                        <img id="produtoImagemPreview" src="" alt="Preview">
+                                        <div class="upload-text">
+                                            <span id="produtoImagemText"><strong>Clique ou arraste</strong> para enviar a foto<br><span>(JPG, PNG, WEBP - Máx 5MB)</span></span>
+                                        </div>
+                                        <input type="file" id="produtoImagem" accept=".jpg, .jpeg, .png, .webp" class="file-input-hidden">
                                     </div>
                                     <input type="hidden" id="produtoImagemBase64" value="">
                                 </div>
@@ -664,7 +677,10 @@
                         <div class="nf-section">
                             <h3>📦 Produtos</h3>
                             <div class="add-product-row">
-                                <select id="selectProduto">
+                                <button type="button" class="btn-camera" onclick="startCameraScanner()" title="Ler Código pela Câmera">
+                                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                                </button>
+                                <select id="selectProduto" style="flex: 1;">
                                     <option value="">Selecione um produto</option>
                                 </select>
                                 <input type="number" id="qtdProduto" placeholder="Qtd" min="1" value="1">
@@ -1071,7 +1087,7 @@
                                 </div>
                                 <div class="system-info-item">
                                     <span class="info-label">Última Atualização</span>
-                                    <span class="info-value">07/07/2026</span>
+                                    <span class="info-value">08/07/2026</span>
                                 </div>
                                 <div class="system-info-item">
                                     <span class="info-label">Produtos Cadastrados</span>
@@ -1085,9 +1101,20 @@
                         </div>
                     </div>
                 </section>
-            </div>
-        </main>
     </div>
+
+    <!-- Scanner Camera Modal -->
+    <div id="cameraScannerModal" class="modal" style="display:none;">
+        <div class="modal-content camera-modal">
+            <span class="close-modal" onclick="closeCameraScanner()">&times;</span>
+            <h2>📷 Ler Código de Barras</h2>
+            <p style="text-align:center; color:#666; margin-bottom:10px;">Aponte a câmera para o código de barras.</p>
+            <div id="camera-reader" style="width: 100%; max-width: 500px; margin: 0 auto;"></div>
+        </div>
+    </div>
+
+    <!-- html5-qrcode para leitura de código via câmera -->
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
     <script src="api_sync.js"></script>
     <script src="dashboard.js"></script>

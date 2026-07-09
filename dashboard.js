@@ -13,6 +13,12 @@ class ToastManager {
     }
 
     show(message, type = 'info', duration = 3000) {
+        // Verificar preferência de notificações (se estiver false, só mostra erros/avisos graves)
+        const notificationsEnabled = localStorage.getItem('notificationsEnabled');
+        if (notificationsEnabled === 'false' && (type === 'success' || type === 'info')) {
+            return null; // Silencia mensagens não críticas
+        }
+
         const icons = {
             success: '✅',
             error: '❌',

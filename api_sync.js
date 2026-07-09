@@ -3,7 +3,7 @@
  * Sincroniza o LocalStorage com o SQLite Backend e intercepta operações de escrita
  */
 
-const API_BASE = 'http://localhost:3000/api';
+const API_BASE = window.location.protocol === 'file:' ? 'http://localhost:3000/api' : (window.location.origin + '/api');
 
 // Interceptadores originais do localStorage
 const originalSetItem = localStorage.setItem;

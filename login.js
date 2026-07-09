@@ -269,7 +269,8 @@ class LoginController {
      * Faz requisição ao servidor real
      */
     async simulateServerRequest(data) {
-        const response = await fetch('http://localhost:3000/api/auth/login', {
+        const API_BASE = window.location.protocol === 'file:' ? 'http://localhost:3000/api' : (window.location.origin + '/api');
+        const response = await fetch(API_BASE + '/auth/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username: data.username, password: data.password })

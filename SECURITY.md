@@ -329,4 +329,4 @@ InputSanitizer.validatePasswordStrength('Abc123!@#')   // forte
 
 Para dúvidas ou sugestões sobre segurança, contacte o time de desenvolvimento.
 
-**Última atualização**: 2026-07-07
+**Última atualização**: 2026-07-08

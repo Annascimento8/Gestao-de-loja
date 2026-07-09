@@ -1010,3 +1010,131 @@ window.addEventListener('load', () => {
         }
     }, 600);
 });
+
+// ==========================================
+// CAMERA SCANNER (HTML5-QRCode)
+// ==========================================
+let html5QrcodeScanner = null;
+
+window.startCameraScanner = function(targetInputId = null) {
+    const modal = document.getElementById('cameraScannerModal');
+    if(modal) modal.style.display = 'flex';
+    
+    // Configura o leitor para ser rápido e usar a câmera traseira
+    html5QrcodeScanner = new Html5QrcodeScanner(
+        "camera-reader", 
+        { fps: 15, qrbox: {width: 250, height: 250}, aspectRatio: 1.0 }, 
+        false
+    );
+    
+    html5QrcodeScanner.render((decodedText, decodedResult) => {
+        // Sucesso na leitura!
+        
+        // Tocar um bipe sonoro de sucesso (opcional)
+        try {
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioCtx.createOscillator();
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(800, audioCtx.currentTime);
+            oscillator.connect(audioCtx.destination);
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + 0.1);
+        } catch(e){}
+
+        // Se tem um input alvo (ex: Cadastrar Produto)
+        if (targetInputId) {
+            const input = document.getElementById(targetInputId);
+            if (input) {
+                input.value = decodedText;
+                if(window.app && window.app.toast) window.app.toast.success('Código lido com sucesso!');
+            }
+        } else {
+            // Leitura global (PDV)
+            if (window.app) window.app.handleBarcodeScanned(decodedText);
+        }
+        
+        closeCameraScanner();
+    }, (errorMessage) => {
+        // Ignora erros de frame
+    });
+};
+
+window.closeCameraScanner = function() {
+    const modal = document.getElementById('cameraScannerModal');
+    if(modal) modal.style.display = 'none';
+    
+    if (html5QrcodeScanner) {
+        html5QrcodeScanner.clear().catch(error => {
+            console.error('Failed to clear scanner', error);
+        });
+        html5QrcodeScanner = null;
+    }
+};
+
+// ==========================================
+// LIGHT MODE / DARK MODE TOGGLE
+// ==========================================
+document.addEventListener('DOMContentLoaded', function() {
+    const darkModeToggle = document.getElementById('prefDarkMode');
+    
+    if (darkModeToggle) {
+        // Load preference
+        const isLightMode = localStorage.getItem('themePreference') === 'light';
+        
+        if (isLightMode) {
+            document.body.classList.add('light-mode');
+            darkModeToggle.checked = false; // "Modo Escuro" is off
+        } else {
+            document.body.classList.remove('light-mode');
+            darkModeToggle.checked = true; // "Modo Escuro" is on
+        }
+
+        // Handle change
+        darkModeToggle.addEventListener('change', function(e) {
+            if (e.target.checked) {
+                // Turn ON Dark Mode
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('themePreference', 'dark');
+            } else {
+                // Turn OFF Dark Mode (Light Mode)
+                document.body.classList.add('light-mode');
+                localStorage.setItem('themePreference', 'light');
+            }
+        });
+    }
+});
+
+// ==========================================
+// NOTIFICATIONS TOGGLE
+// ==========================================
+document.addEventListener('DOMContentLoaded', function() {
+    const notifToggle = document.getElementById('prefNotificacoes');
+    
+    if (notifToggle) {
+        // Load preference (default is true/enabled)
+        const notifPref = localStorage.getItem('notificationsEnabled');
+        
+        if (notifPref === 'false') {
+            notifToggle.checked = false;
+        } else {
+            notifToggle.checked = true;
+        }
+
+        // Handle change
+        notifToggle.addEventListener('change', function(e) {
+            if (e.target.checked) {
+                localStorage.setItem('notificationsEnabled', 'true');
+                if (window.app && window.app.toast) {
+                    window.app.toast.success('Notificações ativadas!');
+                }
+            } else {
+                localStorage.setItem('notificationsEnabled', 'false');
+                // We show this one last toast before it goes silent
+                if (window.app && window.app.toast) {
+                    const tempManager = new ToastManager(); // bypass the check temporarily just to warn
+                    tempManager.info('Notificações silenciadas.');
+                }
+            }
+        });
+    }
+});
