@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const bcrypt = require('bcryptjs');
 const db = require('./db/database');
 
 const app = express();
@@ -323,12 +324,32 @@ app.delete('/api/usuarios/:id', async (req, res) => {
 app.post('/api/auth/login', async (req, res) => {
     const { username, password } = req.body;
     try {
-        const user = await db.query('SELECT * FROM usuarios WHERE username = ? AND password = ?', [username, password]);
+        const user = await db.query('SELECT * FROM usuarios WHERE username = ?', [username]);
         if (user.length > 0) {
-            res.json({ success: true, token: 'mock_token_' + Date.now(), user: { id: user[0].id, username: user[0].username, role: user[0].role } });
-        } else {
-            res.status(401).json({ error: 'Credenciais inválidas' });
+            const match = bcrypt.compareSync(password, user[0].password);
+            if (match) {
+                return res.json({ success: true, token: 'mock_token_' + Date.now(), user: { id: user[0].id, username: user[0].username, role: user[0].role } });
+            }
         }
+        res.status(401).json({ error: 'Credenciais inválidas' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/api/auth/change-password', async (req, res) => {
+    const { username, oldPassword, newPassword } = req.body;
+    try {
+        const user = await db.query('SELECT * FROM usuarios WHERE username = ?', [username]);
+        if (user.length > 0) {
+            const match = bcrypt.compareSync(oldPassword, user[0].password);
+            if (match) {
+                const hashedNew = bcrypt.hashSync(newPassword, 10);
+                await db.execute('UPDATE usuarios SET password = ? WHERE username = ?', [hashedNew, username]);
+                return res.json({ success: true, message: 'Senha atualizada com sucesso' });
+            }
+        }
+        res.status(401).json({ error: 'Senha atual incorreta ou usuário não encontrado' });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

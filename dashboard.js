@@ -1476,20 +1476,13 @@ class DashboardApp {
         this.toast.success('Dados salvos com sucesso!');
     }
 
-    changePassword() {
+    async changePassword() {
         const senhaAtual = document.getElementById('senhaAtual').value;
         const senhaNova = document.getElementById('senhaNova').value;
         const senhaConfirm = document.getElementById('senhaConfirm').value;
 
         if (!senhaAtual || !senhaNova || !senhaConfirm) {
             this.toast.warning('Preencha todos os campos');
-            return;
-        }
-
-        // Verificar senha atual (dinâmica)
-        const storedPassword = localStorage.getItem('userPassword') || 'reis2024';
-        if (senhaAtual !== storedPassword) {
-            this.toast.error('Senha atual incorreta');
             return;
         }
 
@@ -1503,18 +1496,35 @@ class DashboardApp {
             return;
         }
 
-        // Salvar nova senha
-        localStorage.setItem('userPassword', senhaNova);
+        try {
+            const API_BASE = window.location.protocol === 'file:' ? 'http://localhost:3000/api' : (window.location.origin + '/api');
+            const usuarioStr = localStorage.getItem('usuario');
+            if (!usuarioStr) throw new Error("Usuário não encontrado na sessão");
+            const usuario = JSON.parse(usuarioStr);
+            
+            const response = await fetch(API_BASE + '/auth/change-password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: usuario.username, oldPassword: senhaAtual, newPassword: senhaNova })
+            });
+            
+            const result = await response.json();
+            if (!response.ok) {
+                throw new Error(result.error || 'Erro ao alterar senha');
+            }
+            
+            this.toast.success('Senha alterada com sucesso!');
+            this.activity.log('Senha do administrador alterada', 'info');
 
-        this.toast.success('Senha alterada com sucesso!');
-        this.activity.log('Senha do administrador alterada', 'info');
-
-        // Limpar campos
-        document.getElementById('senhaAtual').value = '';
-        document.getElementById('senhaNova').value = '';
-        document.getElementById('senhaConfirm').value = '';
-        document.getElementById('strengthFill').style.width = '0';
-        document.getElementById('strengthLabel').textContent = '';
+            // Limpar campos
+            document.getElementById('senhaAtual').value = '';
+            document.getElementById('senhaNova').value = '';
+            document.getElementById('senhaConfirm').value = '';
+            document.getElementById('strengthFill').style.width = '0';
+            document.getElementById('strengthLabel').textContent = '';
+        } catch (error) {
+            this.toast.error(error.message);
+        }
     }
 
     updatePasswordStrength() {

@@ -1,5 +1,6 @@
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
+const bcrypt = require('bcryptjs');
 
 // Verifica se estamos rodando na nuvem (Render/Supabase) ou localmente
 const isPostgres = !!process.env.DATABASE_URL;
@@ -141,15 +142,19 @@ function initDatabase() {
         }
         
         // Criar usuário admin padrão
+        const adminUser = process.env.ADMIN_USER || 'admin';
+        const adminPass = process.env.ADMIN_PASS || 'reis2024';
+        const hashedPass = bcrypt.hashSync(adminPass, 10);
+
         if (isPostgres) {
-            const res = await pool.query(`SELECT id FROM usuarios WHERE username = 'admin'`);
+            const res = await pool.query(`SELECT id FROM usuarios WHERE username = $1`, [adminUser]);
             if (res.rowCount === 0) {
-                await pool.query(`INSERT INTO usuarios (username, nome, password, role) VALUES ('admin', 'Administrador', 'reis2024', 'admin')`);
+                await pool.query(`INSERT INTO usuarios (username, nome, password, role) VALUES ($1, 'Administrador', $2, 'admin')`, [adminUser, hashedPass]);
             }
         } else {
-            dbSqlite.get(`SELECT id FROM usuarios WHERE username = 'admin'`, (err, row) => {
+            dbSqlite.get(`SELECT id FROM usuarios WHERE username = ?`, [adminUser], (err, row) => {
                 if (!row) {
-                    dbSqlite.run(`INSERT INTO usuarios (username, nome, password, role) VALUES ('admin', 'Administrador', 'reis2024', 'admin')`);
+                    dbSqlite.run(`INSERT INTO usuarios (username, nome, password, role) VALUES (?, 'Administrador', ?, 'admin')`, [adminUser, hashedPass]);
                 }
             });
         }
