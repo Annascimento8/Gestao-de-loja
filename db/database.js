@@ -143,7 +143,7 @@ function initDatabase() {
         
         // Criar usuário admin padrão
         const adminUser = process.env.ADMIN_USER || 'admin';
-        const adminPass = process.env.ADMIN_PASS || 'reis2024';
+        const adminPass = process.env.ADMIN_PASS || 'senha123';
         const hashedPass = bcrypt.hashSync(adminPass, 10);
 
         if (isPostgres) {
