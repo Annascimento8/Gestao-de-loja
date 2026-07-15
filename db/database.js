@@ -142,21 +142,26 @@ function initDatabase() {
         }
         
         // Criar usuário admin padrão
-        const adminUser = process.env.ADMIN_USER || 'admin';
-        const adminPass = process.env.ADMIN_PASS || 'senha123';
-        const hashedPass = bcrypt.hashSync(adminPass, 10);
+        const adminUser = process.env.ADMIN_USER;
+        const adminPass = process.env.ADMIN_PASS;
 
-        if (isPostgres) {
-            const res = await pool.query(`SELECT id FROM usuarios WHERE username = $1`, [adminUser]);
-            if (res.rowCount === 0) {
-                await pool.query(`INSERT INTO usuarios (username, nome, password, role) VALUES ($1, 'Administrador', $2, 'admin')`, [adminUser, hashedPass]);
-            }
+        if (!adminUser || !adminPass) {
+            console.warn('⚠️ AVISO: ADMIN_USER ou ADMIN_PASS não definidos no arquivo .env. O usuário admin padrão não será criado automaticamente.');
         } else {
-            dbSqlite.get(`SELECT id FROM usuarios WHERE username = ?`, [adminUser], (err, row) => {
-                if (!row) {
-                    dbSqlite.run(`INSERT INTO usuarios (username, nome, password, role) VALUES (?, 'Administrador', ?, 'admin')`, [adminUser, hashedPass]);
+            const hashedPass = bcrypt.hashSync(adminPass, 10);
+
+            if (isPostgres) {
+                const res = await pool.query(`SELECT id FROM usuarios WHERE username = $1`, [adminUser]);
+                if (res.rowCount === 0) {
+                    await pool.query(`INSERT INTO usuarios (username, nome, password, role) VALUES ($1, 'Administrador', $2, 'admin')`, [adminUser, hashedPass]);
                 }
-            });
+            } else {
+                dbSqlite.get(`SELECT id FROM usuarios WHERE username = ?`, [adminUser], (err, row) => {
+                    if (!row) {
+                        dbSqlite.run(`INSERT INTO usuarios (username, nome, password, role) VALUES (?, 'Administrador', ?, 'admin')`, [adminUser, hashedPass]);
+                    }
+                });
+            }
         }
     };
 

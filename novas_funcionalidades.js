@@ -628,7 +628,7 @@ DashboardApp.prototype.showNewUserModal = function() {
     if (!username) return;
     const nome = prompt('Nome completo:');
     if (!nome) return;
-    const password = prompt('Senha (padrão: 123456):') || '123456';
+    const password = prompt('Senha:');
     const rolePrompt = prompt('Perfil (admin, gerente, caixa, estoquista):');
     const role = rolePrompt ? rolePrompt.toLowerCase() : 'caixa';
     
