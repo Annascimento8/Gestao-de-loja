@@ -146,7 +146,7 @@ function initDatabase() {
         const adminPass = process.env.ADMIN_PASS;
 
         if (!adminUser || !adminPass) {
-            console.warn('⚠️ AVISO: ADMIN_USER ou ADMIN_PASS não definidos no arquivo .env. O usuário admin padrão não será criado automaticamente.');
+            console.warn('⚠️ AVISO: ADMIN_USER ou ADMIN_PASS não definidos nas variáveis de ambiente. O usuário admin padrão não será criado/atualizado.');
         } else {
             const hashedPass = bcrypt.hashSync(adminPass, 10);
 
@@ -154,11 +154,17 @@ function initDatabase() {
                 const res = await pool.query(`SELECT id FROM usuarios WHERE username = $1`, [adminUser]);
                 if (res.rowCount === 0) {
                     await pool.query(`INSERT INTO usuarios (username, nome, password, role) VALUES ($1, 'Administrador', $2, 'admin')`, [adminUser, hashedPass]);
+                } else {
+                    // Força a atualização da senha no banco online para garantir que a senha do painel Render funcione
+                    await pool.query(`UPDATE usuarios SET password = $1 WHERE username = $2`, [hashedPass, adminUser]);
                 }
             } else {
                 dbSqlite.get(`SELECT id FROM usuarios WHERE username = ?`, [adminUser], (err, row) => {
                     if (!row) {
                         dbSqlite.run(`INSERT INTO usuarios (username, nome, password, role) VALUES (?, 'Administrador', ?, 'admin')`, [adminUser, hashedPass]);
+                    } else {
+                        // Força a atualização da senha no SQLite local
+                        dbSqlite.run(`UPDATE usuarios SET password = ? WHERE username = ?`, [hashedPass, adminUser]);
                     }
                 });
             }
